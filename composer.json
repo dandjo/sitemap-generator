@@ -1,0 +1,23 @@
+{
+  "name": "dandjo/sitemap-generator",
+  "version": "1.0.0",
+  "description": "Memory friendly PHP sitemap generator.",
+  "keywords": ["php", "sitemap", "generator", "psr-1", "psr-2", "psr-4"],
+  "type": "library",
+  "license": "MIT",
+  "minimum-stability": "stable",
+  "authors": [
+    {
+      "name": "Daniel Pernold",
+      "email": "daniel.pernold@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0.0",
+    "ext-simplexml": "*",
+    "league/flysystem": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {"Dandjo\\SitemapGenerator\\": "src/"}
+  }
+}
