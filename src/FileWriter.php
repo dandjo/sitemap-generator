@@ -38,7 +38,7 @@ class FileWriter implements WriterInterface
     /**
      * @var string
      */
-    public $filenameIndex = 'sitemap-index.xml';
+    public $filenameIndex = 'sitemap.index.xml';
 
     /**
      * FileWriter constructor.
