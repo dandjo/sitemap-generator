@@ -1,6 +1,6 @@
 {
   "name": "dandjo/sitemap-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Memory friendly PHP sitemap generator.",
   "keywords": ["php", "sitemap", "generator", "psr-1", "psr-2", "psr-4"],
   "type": "library",

@@ -33,12 +33,12 @@ class FileWriter implements WriterInterface
     /**
      * @var string
      */
-    public $filename = 'sitemap';
+    public $filename = 'sitemap.xml';
 
     /**
      * @var string
      */
-    public $filenameIndex = 'sitemap-index';
+    public $filenameIndex = 'sitemap-index.xml';
 
     /**
      * FileWriter constructor.
@@ -85,11 +85,11 @@ class FileWriter implements WriterInterface
         }
         $now = date_create();
         for ($i = 0; $i <= $this->fileIter; $i++) {
-            $sitemap = new Sitemap($this->filename . '-' . $i . '.xml');
+            $sitemap = new Sitemap($this->buildFilename($i));
             $sitemap->lastModified = $now;
             $index->addSitemap($sitemap);
         }
-        $this->filesystem->put($this->filenameIndex . '.xml', $index);
+        $this->filesystem->put($this->filenameIndex, $index);
     }
 
     /**
@@ -97,7 +97,21 @@ class FileWriter implements WriterInterface
      */
     protected function writeUrlSet()
     {
-        $filename = $this->filename . '-' . $this->fileIter . '.xml';
-        $this->filesystem->put($filename, $this->urlSet);
+        $this->filesystem->put($this->buildFilename($this->fileIter), $this->urlSet);
+    }
+
+    /**
+     * @param int $iter
+     * @return string
+     */
+    protected function buildFilename(int $iter): string
+    {
+        $parts = pathinfo($this->filename);
+        return implode('', [
+            $parts['filename'],
+            '-',
+            $iter,
+            $parts['extension'],
+        ]);
     }
 }
