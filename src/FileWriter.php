@@ -107,9 +107,8 @@ class FileWriter implements WriterInterface
     protected function buildFilename(int $iter): string
     {
         $parts = pathinfo($this->filename);
-        return implode('', [
+        return implode('.', [
             $parts['filename'],
-            '-',
             $iter,
             $parts['extension'],
         ]);
