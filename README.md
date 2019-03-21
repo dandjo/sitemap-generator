@@ -17,8 +17,8 @@ use League\Flysystem\Filesystem;
 
 
 $writer = new FileWriter(new Filesystem(new Local('/tmp/')));
-$writer->filename = 'sitemap';  // optional
-$writer->filenameIndex = 'sitemap-index';  // optional
+$writer->filename = 'sitemap.xml';  // optional
+$writer->filenameIndex = 'sitemap.index.xml';  // optional
 for ($i = 0; $i < 6000000; $i++) {
     $url = new Url('http://localhost/foo/bar/' . $i);
     $url->changeFrequency = 'always';  // optional
