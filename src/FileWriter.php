@@ -7,11 +7,13 @@ use Dandjo\SitemapGenerator\Components\Index;
 use Dandjo\SitemapGenerator\Components\Sitemap;
 use Dandjo\SitemapGenerator\Components\Url;
 use Dandjo\SitemapGenerator\Components\UrlSet;
+use League\Flysystem\Filesystem;
+use OverflowException;
 
 class FileWriter implements WriterInterface
 {
     /**
-     * @var \League\Flysystem\Filesystem
+     * @var Filesystem
      */
     protected $filesystem;
 
@@ -41,10 +43,26 @@ class FileWriter implements WriterInterface
     public $filenameIndex = 'sitemap.index.xml';
 
     /**
-     * FileWriter constructor.
-     * @param \League\Flysystem\Filesystem $filesystem
+     * @var int
      */
-    public function __construct(\League\Flysystem\Filesystem $filesystem)
+    public $indexSize = 50000;
+
+    /**
+     * @var int
+     */
+    public $urlSetSize = 5000;
+
+    /**
+     * @var bool
+     * @see https://www.php.net/manual/en/function.gzencode.php
+     */
+    public $gzipLevel = 0;
+
+    /**
+     * FileWriter constructor.
+     * @param Filesystem $filesystem
+     */
+    public function __construct(Filesystem $filesystem)
     {
         $this->filesystem = $filesystem;
     }
@@ -67,7 +85,7 @@ class FileWriter implements WriterInterface
         }
         $this->urlSet->addUrl($url);
         $this->urlIter++;
-        if ($this->urlIter >= 5000) {
+        if ($this->urlIter >= $this->urlSetSize) {
             $this->writeUrlSet();
             $this->urlIter = 0;
             $this->fileIter++;
@@ -80,8 +98,8 @@ class FileWriter implements WriterInterface
      */
     public function writeIndex(Index $index)
     {
-        if ($this->fileIter > 50000) {
-            throw new \OverflowException('Maximum allowed urlsets exceeded');
+        if ($this->fileIter > $this->indexSize) {
+            throw new OverflowException('Maximum allowed urlsets exceeded');
         }
         $now = date_create();
         for ($i = 0; $i <= $this->fileIter; $i++) {
@@ -89,7 +107,11 @@ class FileWriter implements WriterInterface
             $sitemap->lastModified = $now;
             $index->addSitemap($sitemap);
         }
-        $this->filesystem->put($this->filenameIndex, $index);
+        $content = $index;
+        if ($this->gzipLevel !== 0) {
+            $content = gzencode($content, $this->gzipLevel);
+        }
+        $this->filesystem->put($this->filenameIndex, $content);
     }
 
     /**
@@ -97,7 +119,11 @@ class FileWriter implements WriterInterface
      */
     protected function writeUrlSet()
     {
-        $this->filesystem->put($this->buildFilename($this->fileIter), $this->urlSet);
+        $content = $this->urlSet;
+        if ($this->gzipLevel !== 0) {
+            $content = gzencode($content, $this->gzipLevel);
+        }
+        $this->filesystem->put($this->buildFilename($this->fileIter), $content);
     }
 
     /**
